@@ -10,13 +10,18 @@
   "dependencies": {
     "bcryptjs": "*",
     "bluebird": "*",
-    "body-parser": "~1.18.2",
+    "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "express": "~4.15.5",
     "jsonwebtoken": "^8.2.0",
     "mongoose": "^5.0.9",
+    "mongoose-relationship": "^0.1.5",
+    "nodemailer": "^4.6.3",
+    "nodemon": "^1.17.2",
     "passport": "*",
-    "passport-jwt": "*"
+    "passport-jwt": "*",
+    "randomstring": "^1.1.5",
+    "xoauth2": "^1.2.0"
   },
   "author": "Hadhemi Laouini",
   "license": "ISC"

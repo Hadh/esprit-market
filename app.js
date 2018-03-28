@@ -11,7 +11,8 @@ mongoose.connect(config.database);
 const app = express();
 
 const users = require('./routes/users');
-
+const projects = require('./routes/projects');
+const categories = require('./routes/cateogories');
 // Port Number
 const port = 3000;
 
@@ -31,6 +32,8 @@ app.use(passport.session());
 require('./config/passport')(passport);
 
 app.use('/users', users);
+app.use('/projects', projects);
+app.use('/categories', categories);
 
 // Index Route
 app.get('/', (req, res) => {

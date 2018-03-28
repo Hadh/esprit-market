@@ -4,9 +4,7 @@ const config = require('../config/database');
 
 // User Schema
 const UserSchema = mongoose.Schema({
-  name: {
-    type: String
-  },
+  name: {type: String},
   email: {
     type: String,
     required: true,
@@ -21,19 +19,20 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true
   },
-    address: {
-        type:String
-    },
+    address: {type:String},
     investor : {
         type: Boolean,
-        defaul: false
+        default: false
     },
     admin: {
         type: Boolean,
         default:false
     },
-    confirmed: {
-        type:Boolean
+    active: {type:Boolean},
+    secretToken: {type:String},
+    created_at:{
+        type:Date,
+        default: Date.now()
     }
 });
 
@@ -41,7 +40,7 @@ const User = module.exports = mongoose.model('User', UserSchema);
 
 module.exports.getUserById = function(id, callback){
   User.findById(id, callback);
-}
+};
 
 module.exports.getUserByEmail = function(email, callback){
   const query = {email: email}
@@ -63,4 +62,4 @@ module.exports.comparePassword = function(candidatePassword, hash, callback){
     if(err) throw err;
     callback(null, isMatch);
   });
-}
+};
