@@ -19,11 +19,15 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true
   },
+    city: {type:String},
     address: {type:String},
+    zipcode: {type:Number},
     investor : {
         type: Boolean,
         default: false
     },
+    phone: {type:Number},
+
     admin: {
         type: Boolean,
         default:false

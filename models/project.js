@@ -1,38 +1,41 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose').set('debug', true);
 const Schema = mongoose.Schema;
-
 
 // Project Schema
 const ProjectSchema = new Schema({
     name: String,
     description: String,
+    tagline:String,
     category:{
         type: String
     },
+    cover:{
+        type:Object
+    },
+    logo:{
+        type:Object
+    },
+    image1:{
+        type:Object
+    },
+    image2:{
+        type:Object
+    },
+    image3:{
+        type:Object
+    },
     fundraiser: Number,
     owner:{
-        type: Schema.Types.ObjectId,
-        ref: "user"
+        type: Object
     },
     accepted : {
         type:Boolean,
         default:false
     },
-    investors : [{
-        type: Schema.Types.ObjectId,
-        ref: "user"
-    }],
+    investors : [],
     currentfund: {
         type:Number,
         default:0
-    },
-    specs:{
-        innovation:{
-            type: String
-        },
-        monetisation:{
-            type: String
-        }
     },
     score:{
         innovation:{
@@ -48,6 +51,11 @@ const ProjectSchema = new Schema({
             default:0
         },
     },
+    revenue: {type:String},
+    business_model:{type:String},
+    risks:{type:String},
+    add_information:{type:String},
+    website:{type:String},
     created_at:{
         type:Date,
         default: Date.now()

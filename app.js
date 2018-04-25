@@ -22,6 +22,9 @@ app.use(cors());
 // Set Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
 
+//making uploads file publically available
+app.use('/uploads',express.static('uploads'));
+
 // Body Parser Middleware
 app.use(bodyParser.json());
 

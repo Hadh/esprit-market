@@ -6,6 +6,7 @@ const config = require('../config/database');
 const User = require('../models/user');
 const randomstring = require('randomstring');
 const nodemailer = require('nodemailer');
+const hsb = require('nodemailer-express-handlebars');
 
 
 /* GET users listing. */
@@ -22,7 +23,9 @@ router.post('/register', (req, res, next) => {
         name: req.body.name,
         username: req.body.username,
         job: req.body.job,
-        birth_date: req.body.birth_date,
+        city: req.body.city,
+        phone: req.body.phone,
+        address : req.body.address,
         email: req.body.email,
         password: req.body.password,
         investor: false,
@@ -52,11 +55,20 @@ router.post('/register', (req, res, next) => {
             }
         });
 
+        transporter.use('compile', hsb({
+            viewPath: 'views/email',
+            extName:'.hbs'
+        }));
+
         var mailOptions = {
             from: 'ESPRIT-MARKET Team',
             to: newUser.email,
             subject: 'Account Verification',
-            text: html
+            template:'verification',
+            context:{
+                stringToken:stringToken
+            }
+            //text: html
         };
 
         transporter.sendMail(mailOptions, function (err, res) {
