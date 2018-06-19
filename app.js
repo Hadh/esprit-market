@@ -14,8 +14,7 @@ const users = require('./routes/users');
 const projects = require('./routes/projects');
 const categories = require('./routes/cateogories');
 const dash = require('./routes/dash');
-// Port Number
-const port = 3000;
+
 
 // CORS Middleware
 app.use(cors());
@@ -39,13 +38,12 @@ app.use('/users', users);
 app.use('/projects', projects);
 app.use('/categories', categories);
 app.use('/report',dash);
-
+const port = 3000;
 // Index Route
 app.get('/', (req, res) => {
   res.send('Invalid Endpoint');
 });
 
-// Start Server
-app.listen(port, () => {
-  console.log('Server started on port '+port);
+app.listen(process.env.PORT || port, () => {
+    console.log('Server started on port '+port);
 });
