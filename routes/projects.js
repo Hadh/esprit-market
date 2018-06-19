@@ -116,7 +116,7 @@ router.post('/webhook',function(req,res){
             let response = "";
             let responseObj = {
                 "fulfillmentText": response,
-                "fulfillmentMessage":[{"text": {"text": [p.length]}}],
+                "fulfillmentMessages":[{"text": {"text": [p.length]}}],
                 "source": ""
             };
             console.log('Here is the response to dialogFlow');
