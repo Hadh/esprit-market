@@ -37,6 +37,42 @@ router.get('/',function(req, res, next) {
     });
 });
 
+/*Get last 3 */
+router.get('/last_projects',function(req,res){
+   Project.find({},{},{limit: 3},function(err, projects){
+       if(err){
+           res.json({success:false,msg:'Something went wrong'});
+           console.log(err);
+       } else {
+           res.json({success:true,projects});
+       }
+   });
+});
+
+/* Get List of accepted projects*/
+router.get('/accepted',function(req, res, next) {
+    Project.find({status:'ACCEPTED'}, function(err, projects) {
+        if(err){
+            res.json({success:false,msg:'Something went wrong'});
+            console.log(err);
+        } else {
+            res.json({success:true,projects});
+        }
+    });
+});
+
+/* Get List of refused projects*/
+router.get('/refused',function(req, res, next) {
+    Project.find({status:'REFUSED'}, function(err, projects) {
+        if(err){
+            res.json({success:false,msg:'Something went wrong'});
+            console.log(err);
+        } else {
+            res.json({success:true,projects});
+        }
+    });
+});
+
 /* Get project by id*/
 router.get('/project/:project_id',function(req, res, next) {
     var project_id = req.params.project_id;
@@ -49,6 +85,53 @@ router.get('/project/:project_id',function(req, res, next) {
         }
     });
 });
+
+/*Get count of each project with category*/
+router.get('/category_count', function(req,res){
+    Project.aggregate( [  {$group : { _id : '$category', count : {$sum : 1}}}],function(err,obj){
+        if(err){
+            res.json({success:false,msg:'Something went wrong'});
+            console.log(err);
+        } else {
+            res.json({success:true,obj});
+        }
+    });
+});
+
+/**** WEBHOOK for DiaglogFlow**/
+router.post('/webhook',function(req,res){
+   console.log('Retrieved a post request');
+    if(!req.body) return res.sendStatus(400);
+    res.setHeader('Content-Type', 'application/json');
+    console.log('Heres the post request from dialoagFlow');
+    console.log(req.body);
+    console.log('got param', req.body.queryResult.parameters['categories']);
+    var category = req.body.queryResult.parameters['categories'];
+    var p = getCount(category);
+    let response = "";
+    let responseObj = {
+        "fulfillmentText": response,
+        "fulfillmentMessage":[{"text": {"text": [p]}}],
+        "source": ""
+    };
+    console.log('Here is the response to dialogFlow');
+    console.log(responseObj);
+    return res.json(responseObj);
+});
+
+function getCount(category){
+    var regex = new RegExp(["^", category, "$"].join(""), "i");
+    Project.find({category:regex},function(err,projects){
+        if(err){
+            console.log(err,'Something went wrong');
+        } else {
+            //res.json({success:true,msg:'Retrieved done!', projects});
+            return projects.length();
+
+        }
+    })
+}
+
 
 /* Post a project*/      //,passport.authenticate('jwt', {session:false}),
 router.post('/',upload.any(),function(req, res, next){
@@ -65,7 +148,7 @@ router.post('/',upload.any(),function(req, res, next){
         image3:  req.files[4],
         fundraiser: req.body.fundraiser,
         owner: connectedUser,
-        accepted: false,
+        status: 'PENDING',
         currentfund:0,
         investors: [],
         revenue:req.body.revenue,
@@ -139,6 +222,15 @@ router.post('/project/:project_id',passport.authenticate('jwt', {session:false})
 });
 
 /* Delete a project */
+router.delete('/:project_id',passport.authenticate('jwt', {session:false}),function(req, res, next) {
+    const project_id = req.params.project_id;
+    Project.findByIdAndRemove({_id: project_id} , function(err,resp){
+        if(err) console.log('Something went wrong');
+        else {
+            res.status(200).json({success:true, msg:'Deleted Project Successfully'});
+        }
+    });
+});
 
 /* Update a project*/
 
@@ -147,6 +239,17 @@ router.post('/project/:project_id',passport.authenticate('jwt', {session:false})
 /* Calculate Score*/
 
 /*Accept a project*/
+router.put('/accept/:project_id', function(req, res, next){
+   project_id = req.params.project_id;
+   const query = {status:'ACCEPTED'};
+    Project.findOneAndUpdate( { _id:  project_id }, query, function(err,resp){
+        if(err) console.log('Something went wrong');
+        else {
+            console.log(resp);
+            res.status(200).json({success:true, msg:'Updated Project Successfully'});
+        }
+    });
+});
 
 /*Decline a project*/
 

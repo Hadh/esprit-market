@@ -7,10 +7,10 @@ const Category = require('../models/category');
 
 
 
-/* GET project listing. */
+/* GET categories listing. */
 router.get('/',function(req, res, next) {
-    Category.find({}, function(err, users) {
-        res.json(users);
+    Category.find({}, function(err, categories) {
+        res.json(categories);
     });
 });
 

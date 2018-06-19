@@ -16,6 +16,25 @@ router.get('/',function(req, res, next) {
     });
 });
 
+/*Get users that are project owners*/
+router.get('/owners',function(req,res){
+   User.find({investor: false}, function(err,owners){
+     if(err) console.log(err);
+     else {
+         res.json({success:true,owners})
+     }
+   });
+});
+/*Get users that are investors*/
+router.get('/invests',function(req,res){
+    User.find({investor: true}, function(err,invests){
+        if(err) console.log(err);
+        else {
+            res.json({success:true,invests})
+        }
+    });
+});
+
 // Register
 router.post('/register', (req, res, next) => {
   const stringToken = randomstring.generate();

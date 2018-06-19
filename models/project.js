@@ -28,9 +28,10 @@ const ProjectSchema = new Schema({
     owner:{
         type: Object
     },
-    accepted : {
-        type:Boolean,
-        default:false
+    status: {
+        type: String,
+        enum : ['ACCEPTED','PENDING','REFUSED'],
+        default: 'PENDING'
     },
     investors : [],
     currentfund: {
