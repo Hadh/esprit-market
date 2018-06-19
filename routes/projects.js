@@ -107,30 +107,26 @@ router.post('/webhook',function(req,res){
     console.log(req.body);
     console.log('got param', req.body.queryResult.parameters['categories']);
     var category = req.body.queryResult.parameters['categories'];
-    var p = getCount(category);
-    let response = "";
-    let responseObj = {
-        "fulfillmentText": response,
-        "fulfillmentMessage":[{"text": {"text": [p]}}],
-        "source": ""
-    };
-    console.log('Here is the response to dialogFlow');
-    console.log(responseObj);
-    return res.json(responseObj);
-});
 
-function getCount(category){
     var regex = new RegExp(["^", category, "$"].join(""), "i");
-    Project.find({category:regex},function(err,projects){
+    Project.find({category:regex},function(err,p){
         if(err){
             console.log(err,'Something went wrong');
         } else {
-            //res.json({success:true,msg:'Retrieved done!', projects});
-            return projects.length();
-
+            let response = "";
+            let responseObj = {
+                "fulfillmentText": response,
+                "fulfillmentMessage":[{"text": {"text": [p.length]}}],
+                "source": ""
+            };
+            console.log('Here is the response to dialogFlow');
+            console.log(p.length);
+            return res.json(responseObj);
         }
-    })
-}
+    });
+
+});
+
 
 
 /* Post a project*/      //,passport.authenticate('jwt', {session:false}),
