@@ -27,7 +27,7 @@ const UserSchema = mongoose.Schema({
         default: false
     },
     phone: {type:Number},
-
+    job: {type:String},
     admin: {
         type: Boolean,
         default:false
@@ -49,7 +49,7 @@ module.exports.getUserById = function(id, callback){
 module.exports.getUserByEmail = function(email, callback){
   const query = {email: email}
   User.findOne(query, callback);
-}
+};
 
 module.exports.addUser = function(newUser, callback){
   bcrypt.genSalt(10, (err, salt) => {

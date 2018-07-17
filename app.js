@@ -14,6 +14,8 @@ const users = require('./routes/users');
 const projects = require('./routes/projects');
 const categories = require('./routes/cateogories');
 const dash = require('./routes/dash');
+const admin_rates = require('./routes/admin_rates');
+const investments = require('./routes/investments');
 
 
 // CORS Middleware
@@ -38,6 +40,9 @@ app.use('/users', users);
 app.use('/projects', projects);
 app.use('/categories', categories);
 app.use('/report',dash);
+app.use('/rates',admin_rates);
+app.use('/investments',investments);
+
 const port = 3000;
 // Index Route
 app.get('/', (req, res) => {

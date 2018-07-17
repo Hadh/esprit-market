@@ -73,6 +73,18 @@ router.get('/refused',function(req, res, next) {
     });
 });
 
+/* Get List of Pending projects*/
+router.get('/pending',function(req, res, next) {
+    Project.find({status:'PENDING'}, function(err, projects) {
+        if(err){
+            res.json({success:false,msg:'Something went wrong'});
+            console.log(err);
+        } else {
+            res.json({success:true,projects});
+        }
+    });
+});
+
 /* Get project by id*/
 router.get('/project/:project_id',function(req, res, next) {
     var project_id = req.params.project_id;
@@ -81,6 +93,7 @@ router.get('/project/:project_id',function(req, res, next) {
             res.json({success:false,msg:'Something went wrong'});
             console.log(err);
         } else {
+            console.log(project);
             res.json({success:true,project});
         }
     });
@@ -130,8 +143,9 @@ router.post('/webhook',function(req,res){
 
 
 /* Post a project*/      //,passport.authenticate('jwt', {session:false}),
-router.post('/',upload.any(),function(req, res, next){
+router.post('/',upload.any(),passport.authenticate('jwt', {session:false}),function(req, res, next){
     const connectedUser = req.user;
+    console.log(req.user);
     const newProject = new Project ({
         name: req.body.name,
         description: req.body.description,
@@ -151,7 +165,9 @@ router.post('/',upload.any(),function(req, res, next){
         business_model:req.body.business_model,
         risks:req.body.risks,
         add_information:req.body.add_information,
-        website:req.body.website
+        website:req.body.website,
+        github:req.body.github,
+        stack:req.body.stack
     });
     console.log(newProject);
     newProject.save(function(err, data) {
@@ -196,26 +212,26 @@ router.get('/user/:user_id',function(req, res){
 });
 
 /*Invest in a project : Make user investor and add him to the project investors */
-router.post('/project/:project_id',passport.authenticate('jwt', {session:false}),function(req, res, next) {
-    let user = req.user;
-    let project_id = req.params.project_id;
-    /* Make User investor */
-    let query = {'investor':true};
-    User.findByIdAndUpdate( user._id,query, function(err, doc){
-        if (err) console.log('Ooops!');
-        else {
-            console.log('User Became Investor!');
-            /* Add investor to project investors array*/
-            Project.findByIdAndUpdate(project_id, { "$push": { "investors": doc } },function(err,resp){
-                if(err){
-                    console.log(err,'Something went wrong');
-                } else {
-                    res.json({success:true,msg:'Update done!'});
-                }
-            });
-        }
-    });
-});
+// router.post('/project/:project_id',passport.authenticate('jwt', {session:false}),function(req, res, next) {
+//     let user = req.user;
+//     let project_id = req.params.project_id;
+//     /* Make User investor */
+//     let query = {'investor':true};
+//     User.findByIdAndUpdate( user._id,query, function(err, doc){
+//         if (err) console.log('Ooops!');
+//         else {
+//             console.log('User Became Investor!');
+//             /* Add investor to project investors array*/
+//             Project.findByIdAndUpdate(project_id, { "$push": { "investors": doc } },function(err,resp){
+//                 if(err){
+//                     console.log(err,'Something went wrong');
+//                 } else {
+//                     res.json({success:true,msg:'Update done!'});
+//                 }
+//             });
+//         }
+//     });
+// });
 
 /* Delete a project */
 router.delete('/:project_id',passport.authenticate('jwt', {session:false}),function(req, res, next) {
@@ -229,10 +245,6 @@ router.delete('/:project_id',passport.authenticate('jwt', {session:false}),funct
 });
 
 /* Update a project*/
-
-/* Increase fundraiser */
-
-/* Calculate Score*/
 
 /*Accept a project*/
 router.put('/accept/:project_id', function(req, res, next){
@@ -248,5 +260,15 @@ router.put('/accept/:project_id', function(req, res, next){
 });
 
 /*Decline a project*/
-
+router.put('/refuse/:project_id', function(req, res, next){
+    project_id = req.params.project_id;
+    const query = {status:'REFUSED'};
+    Project.findOneAndUpdate( { _id:  project_id }, query, function(err,resp){
+        if(err) console.log('Something went wrong');
+        else {
+            console.log(resp);
+            res.status(200).json({success:true, msg:'Updated Project Successfully'});
+        }
+    });
+});
 module.exports = router;

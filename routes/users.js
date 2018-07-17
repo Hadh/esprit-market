@@ -18,7 +18,7 @@ router.get('/',function(req, res, next) {
 
 /*Get users that are project owners*/
 router.get('/owners',function(req,res){
-   User.find({investor: false}, function(err,owners){
+   User.find({investor: false , admin: false}, function(err,owners){
      if(err) console.log(err);
      else {
          res.json({success:true,owners})
@@ -31,6 +31,16 @@ router.get('/invests',function(req,res){
         if(err) console.log(err);
         else {
             res.json({success:true,invests})
+        }
+    });
+});
+
+//get all admins
+router.get('/get_admins',function(req,res){
+    User.find({admin: true}, function(err,admins){
+        if(err) console.log(err);
+        else {
+            res.json({success:true,admins})
         }
     });
 });
@@ -102,6 +112,28 @@ router.post('/register', (req, res, next) => {
         res.json({success: true, msg:'User registered! Please Check your email'});
     }
   });
+});
+
+router.post('/add_admin',function(req,res){
+    let newAdmin = new User({
+        name: req.body.name,
+        username: req.body.username,
+        job: req.body.job,
+        city: req.body.city,
+        phone: req.body.phone,
+        address : req.body.address,
+        email: req.body.email,
+        password: req.body.password,
+        investor: false,
+        admin:true,
+        active: false
+    });
+    User.addUser(newAdmin, (err, user) => {
+       if(err) console.log(err);
+       else {
+           res.json({success:true, msg: "Admin added with success"});
+       }
+    });
 });
 
 // Authenticate

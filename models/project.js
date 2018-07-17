@@ -57,6 +57,8 @@ const ProjectSchema = new Schema({
     risks:{type:String},
     add_information:{type:String},
     website:{type:String},
+    github:{type:String},
+    stack:{type:String},
     created_at:{
         type:Date,
         default: Date.now()
@@ -66,7 +68,9 @@ const ProjectSchema = new Schema({
 
 const Project = module.exports = mongoose.model('Project', ProjectSchema);
 
-
+module.exports.getProjectById = function(id, callback){
+    Project.findById(id, callback);
+};
 
 
 
