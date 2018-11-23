@@ -10,33 +10,20 @@ const UserSchema = mongoose.Schema({
     required: true,
     unique: true
   },
-  username: {
-    type: String,
-    required: true,
-    unique: true
-  },
   password: {
     type: String,
     required: true
   },
-    city: {type:String},
-    address: {type:String},
-    zipcode: {type:Number},
-    investor : {
-        type: Boolean,
-        default: false
-    },
-    phone: {type:Number},
-    job: {type:String},
-    admin: {
-        type: Boolean,
-        default:false
-    },
-    active: {type:Boolean},
-    secretToken: {type:String},
-    created_at:{
+  userToken: {
+    type:String
+  },
+  usage : {
+    type: Number,
+    default: 0
+  },
+  last_used:{
         type:Date,
-        default: Date.now()
+        default: null
     }
 });
 

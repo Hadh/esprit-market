@@ -11,12 +11,6 @@ mongoose.connect(config.database);
 const app = express();
 
 const users = require('./routes/users');
-const projects = require('./routes/projects');
-const categories = require('./routes/cateogories');
-const dash = require('./routes/dash');
-const admin_rates = require('./routes/admin_rates');
-const investments = require('./routes/investments');
-
 
 // CORS Middleware
 app.use(cors());
@@ -36,12 +30,8 @@ app.use(passport.session());
 
 require('./config/passport')(passport);
 
-app.use('/users', users);
-app.use('/projects', projects);
-app.use('/categories', categories);
-app.use('/report',dash);
-app.use('/rates',admin_rates);
-app.use('/investments',investments);
+app.use('/api', users);
+
 
 const port = 3000;
 // Index Route
