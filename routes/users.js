@@ -4,56 +4,57 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const config = require('../config/database');
 const User = require('../models/user');
-const randomstring = require('randomstring');
-const nodemailer = require('nodemailer');
-const hsb = require('nodemailer-express-handlebars');
-const LIMIT = 80000;
-const _24_HOURS_TO_SECONDS = 86400;
-
 
 /* GET users listing. */
-router.get('/',function(req, res, next) {
-    User.find({}, function(err, users) {
-        res.json(users);
-    });
+router.get('/', function (req, res, next) {
+  User.find({}, function (err, users) {
+    res.json(users);
+  });
 });
-
 
 // Register
 router.post('/register', (req, res, next) => {
-    const stringToken = randomstring.generate();
-    let newUser = new User({
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        userToken: stringToken
+  let newUser = new User({
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
   });
 
   User.addUser(newUser, (err, user) => {
-    if(err){
-        console.log(err)
-      res.json({success: false, msg:'Failed- User already exists!'});
+    if (err) {
+      console.log(err)
+      res.json({
+        success: false,
+        msg: 'Failed- User already exists!'
+      });
     } else {
-        res.json({success: true, msg:'User registered!'});
+      res.json({
+        success: true,
+        msg: 'User registered!'
+      });
     }
   });
 });
 
-
 // Authenticate
-router.post('/token', (req, res, next) => {
+router.post('/login', (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
 
   User.getUserByEmail(email, (err, user) => {
-    if(err) throw err;
-    if(!user){
-      return res.json({success: false, msg: 'User not found'});
+    if (err) throw err;
+    if (!user) {
+      return res.json({
+        success: false,
+        msg: 'User not found'
+      });
     }
     User.comparePassword(password, user.password, (err, isMatch) => {
-      if(err) throw err;
-      if(isMatch){
-        const token = jwt.sign({data: user}, config.secret, {
+      if (err) throw err;
+      if (isMatch) {
+        const token = jwt.sign({
+          data: user
+        }, config.secret, {
           expiresIn: 604800 // 1 week
         });
 
@@ -63,54 +64,56 @@ router.post('/token', (req, res, next) => {
           user: user
         });
       } else {
-        return res.json({success: false, msg: 'Wrong password'});
+        return res.json({
+          success: false,
+          msg: 'Wrong password'
+        });
       }
     });
   });
 });
 
 /* justify text */
-router.post('/justify', passport.authenticate('jwt', {session:false}),function(req, res, next) {
-    let authUser = req.user;
-    let text_to_justify = req.body.text;
-    let wordCount = text_to_justify.match(/(\w+)/g).length;
-    var seconds = new Date().getTime() / 1000;
-
-    //first time
-    if(authUser.last_used == null){
-        if(wordCount <= LIMIT) {
-            authUser.usage = wordCount;
-            authUser.last_used = Date.now();
-            authUser.save();
-            return res.json({success: true, msg: 'justfied text'});
-        }
-
-        // not first time
-    } else {
-        if(( seconds - authUser.last_used.getTime() / 1000) <= _24_HOURS_TO_SECONDS ){
-            if(wordCount <= LIMIT) {
-                if(authUser.usage + wordCount <= LIMIT){
-                    authUser.usage = authUser.usage+ wordCount;
-                    authUser.last_used = Date.now();
-                    authUser.save();
-                    return res.json({success: true, msg: 'not fist justfied text'});
-                }
-            } 
-        } else {
-            authUser.usage = 0;
-            if(wordCount <= LIMIT) {
-                if(authUser.usage + wordCount <= LIMIT){
-                    authUser.usage = wordCount;
-                    authUser.last_used = Date.now();
-                    authUser.save();
-                    return res.json({success: true, msg: 'not fist justfied text'});
-                }
-            }
-        }
-
-    }
+router.post('/justify', passport.authenticate('jwt', {session: false}), function (req, res, next) {
+  let authUser = req.user;
+  let text_to_justify = req.body.text;
+  res.json({
+    user: authUser
+  });
 });
 
+router.put('/updateUser/:id', passport.authenticate('jwt', {session: false}), function (req, res, next) {
+  const id = req.params.id;
+  const updateOps = {};
+  for (const [key, value] of Object.entries(req.body)) {
+    updateOps[key] = value;
+  }
+  User.updateOne({
+      _id: id
+    }, {
+      $set: updateOps
+    })
+    .exec()
+    .then(doc => {
+      res.status(200).json(doc)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    });
+});
+
+router.delete('/deleteUser/:id',(req,res,next)=>{
+  const id = req.params.id;
+  console.log(id);
+  User.remove({_id : id})
+  .exec()
+  .then(doc=>{
+      res.status(200).json(res);
+  })
+  .catch(err=>{
+      res.status(500).json(err)
+  });
+})
 
 
 module.exports = router;

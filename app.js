@@ -11,6 +11,7 @@ mongoose.connect(config.database);
 const app = express();
 
 const users = require('./routes/users');
+const todos = require('./routes/todos');
 
 // CORS Middleware
 app.use(cors());
@@ -30,11 +31,11 @@ app.use(passport.session());
 
 require('./config/passport')(passport);
 
-app.use('/api', users);
-
+app.use('/users', users);
+app.use('/todos', todos);
 
 const port = 3000;
-// Index Route
+// Index Route 
 app.get('/', (req, res) => {
   res.send('Invalid Endpoint');
 });

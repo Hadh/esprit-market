@@ -1,11 +1,11 @@
 {
-  "name": "market-backend-express-server",
+  "name": "Projet Web",
   "version": "1.0.1",
-  "description": "Esprit Market Backend server",
+  "description": "Projet Web- Todo list",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app"
+    "start": "nodemon app"
   },
   "dependencies": {
     "bcryptjs": "*",
@@ -19,12 +19,12 @@
     "multer": "^1.3.0",
     "nodemailer": "^4.6.3",
     "nodemailer-express-handlebars": "^3.0.0",
-    "nodemon": "^1.17.2",
+    "nodemon": "^1.18.10",
     "passport": "*",
     "passport-jwt": "*",
     "randomstring": "^1.1.5",
     "xoauth2": "^1.2.0"
   },
-  "author": "Hadhemi Laouini",
+  "author": "Ameni Jazzar",
   "license": "ISC"
 }

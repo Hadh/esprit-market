@@ -14,17 +14,12 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  userToken: {
-    type:String
+  isAdmin:{
+    type: Boolean,
+    default: false,
+    required:true
   },
-  usage : {
-    type: Number,
-    default: 0
-  },
-  last_used:{
-        type:Date,
-        default: null
-    }
+  
 });
 
 const User = module.exports = mongoose.model('User', UserSchema);
